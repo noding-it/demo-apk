@@ -1,5 +1,7 @@
 {
   "name": "mabasolutiondemo",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

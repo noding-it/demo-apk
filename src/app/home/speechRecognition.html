@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .holder {
+        position: relative;
+        padding: 15px 5px;
+        width: 250px;
+        margin: 15px auto;
+        border: 1px solid #444;
+      }
+      .holder label {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        font-size: 12px;
+        background: #444;
+        color: #fff;
+        padding: 2px 5px;
+      }
+      input,
+      select {
+        border: 0;
+        width: calc(100% - 10px);
+        background: #d9d9d9;
+        font-size: 14px;
+        padding: 5px;
+        margin: 3px 5px;
+      }
+      button {
+        background: none;
+        border: 3px #444;
+        border-style: dashed solid;
+        padding: 5px 10px;
+        margin: 10px;
+        min-width: 100px;
+      }
+      #results {
+            width: 400px;
+            margin: 10px auto;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+        #div_language {
+            width: 300px;
+            margin: 20px auto;
+        }
+    </style>
+  </head>
+
+  <body>
+    <h1>Speech Recognition</h1>
+    <div id="div_start">
+        <button id="start_button" onclick="startButton(event)">
+            start
+        </button>
+    </div>
+    <div id="results">
+        <span class="final" id="final_span"></span>
+		<span class="interim" id="interim_span"></span><br/>
+		<span class="final" id="barcode_span"></span>
+    </div>
+    <script>
+
+
+var final_transcript = "";
+var recognizing = false;
+var ignore_onend;
+var start_timestamp;
+if (!("webkitSpeechRecognition" in window)) {
+  upgrade();
+} else {
+  start_button.style.display = "inline-block";
+  var recognition = new webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = function() {
+    recognizing = true;
+    // start_img.src = "mic-animate.gif";
+  };
+
+  recognition.onerror = function(event) {
+	console.log('error', event.error);
+    if (event.error == "no-speech") {
+      // start_img.src = "mic.gif";
+      ignore_onend = true;
+    }
+    if (event.error == "audio-capture") {
+      // start_img.src = "mic.gif";
+      ignore_onend = true;
+    }
+    if (event.error == "not-allowed") {
+      if (event.timeStamp - start_timestamp < 100) {
+        // showInfo("info_blocked");
+      } else {
+        // showInfo("info_denied");
+      }
+      ignore_onend = true;
+    }
+	startButton(null);
+  };
+
+  recognition.onend = function() {
+    recognizing = false;
+    if (ignore_onend) {
+      return;
+    }
+    // start_img.src = "mic.gif";
+    if (!final_transcript) {
+      return;
+    }
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+      var range = document.createRange();
+      range.selectNode(document.getElementById("final_span"));
+      window.getSelection().addRange(range);
+    }
+
+  };
+
+  recognition.onresult = function(event) {
+    var interim_transcript = "";
+    if (typeof event.results == "undefined") {
+      recognition.onend = null;
+      recognition.stop();
+      upgrade();
+      return;
+    }
+    for (var i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        final_transcript += event.results[i][0].transcript;
+      } else {
+        interim_transcript += event.results[i][0].transcript;
+      }
+    }
+    final_transcript = capitalize(final_transcript);
+	const speech = linebreak(final_transcript);
+	getBarcode(speech);
+    final_span.innerHTML = speech;
+    interim_span.innerHTML = linebreak(interim_transcript);
+    /*if (final_transcript || interim_transcript) {
+      showButtons("inline-block");
+    }*/
+  };
+}
+
+function getBarcode(speech) {
+	if (speech !== undefined) {
+		speech = speech.trim().toLowerCase();
+		if (speech.indexOf('cerca') > -1) {
+			const barcode = speech.match(/\d+/);//parseInt(speech, 10);
+			// console.log(barcode);
+			barcode_span.innerHTML = 'Barcode: ' + barcode.toString();
+			startButton(null);
+		} else if (speech.indexOf('stop') > -1) {
+			startButton(null);
+		}
+	}
+}
+
+function upgrade() {
+  start_button.style.visibility = "hidden";
+}
+
+var two_line = /\n\n/g;
+var one_line = /\n/g;
+function linebreak(s) {
+  return s.replace(two_line, "<p></p>").replace(one_line, "<br>");
+}
+
+var first_char = /\S/;
+function capitalize(s) {
+  return s.replace(first_char, function(m) {
+    return m.toUpperCase();
+  });
+}
+
+
+function startButton(event) {
+  if (recognizing) {
+    recognition.stop();
+	start_button.innerHTML = 'start';
+    return;
+  }
+  start_button.innerHTML = 'stop';
+  final_transcript = '';
+  recognition.lang = 'it-IT';//select_dialect.value;
+  recognition.start();
+  ignore_onend = false;
+  final_span.innerHTML = "";
+  interim_span.innerHTML = "";
+  // start_img.src = "mic-slash.gif";
+  start_timestamp = event.timeStamp;
+}
+
+    </script>
+  </body>
+</html>

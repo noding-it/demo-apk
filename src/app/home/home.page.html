@@ -41,11 +41,16 @@
             Scansione Singola
           </ion-button>
         </ion-col>
-
         <ion-col class="ion-text-center">
           <ion-button color="success" (click)="scanBarcode(true)">
             <ion-icon slot="end" name="barcode"></ion-icon>
             Scansione Continua
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center" [hidden]="!ds.speech">
+          <ion-button color="tertiary" (click)="scanSpeech()">
+            <ion-icon slot="end" name="mic"></ion-icon>
+            Scansione Vocale
           </ion-button>
         </ion-col>
       </ion-row>

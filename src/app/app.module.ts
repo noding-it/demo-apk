@@ -11,10 +11,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { Network } from '@ionic-native/network/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { BarcodeReaderPage } from './_ui/barcode-reader.page';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, BarcodeReaderPage],
+  entryComponents: [BarcodeReaderPage],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -28,6 +29,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Device
   ],
+  exports: [BarcodeReaderPage],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

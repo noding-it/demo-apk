@@ -73,7 +73,6 @@
 var final_transcript = "";
 var recognizing = false;
 var ignore_onend;
-var start_timestamp;
 if (!("webkitSpeechRecognition" in window)) {
   upgrade();
 } else {
@@ -90,19 +89,12 @@ if (!("webkitSpeechRecognition" in window)) {
   recognition.onerror = function(event) {
 	console.log('error', event.error);
     if (event.error == "no-speech") {
-      // start_img.src = "mic.gif";
       ignore_onend = true;
     }
     if (event.error == "audio-capture") {
-      // start_img.src = "mic.gif";
       ignore_onend = true;
     }
     if (event.error == "not-allowed") {
-      if (event.timeStamp - start_timestamp < 100) {
-        // showInfo("info_blocked");
-      } else {
-        // showInfo("info_denied");
-      }
       ignore_onend = true;
     }
 	startButton(null);
@@ -150,6 +142,8 @@ if (!("webkitSpeechRecognition" in window)) {
       showButtons("inline-block");
     }*/
   };
+
+    startButton(null);
 }
 
 function getBarcode(speech) {
@@ -158,6 +152,7 @@ function getBarcode(speech) {
 		if (speech.indexOf('cerca') > -1) {
 			const barcode = speech.match(/\d+/);//parseInt(speech, 10);
 			// console.log(barcode);
+            localStorage.setItem('BarcodeText', barcode.toString());
 			barcode_span.innerHTML = 'Barcode: ' + barcode.toString();
 			startButton(null);
 		} else if (speech.indexOf('stop') > -1) {
@@ -192,13 +187,11 @@ function startButton(event) {
   }
   start_button.innerHTML = 'stop';
   final_transcript = '';
-  recognition.lang = 'it-IT';//select_dialect.value;
+  recognition.lang = 'it-IT'; // select_dialect.value;
   recognition.start();
   ignore_onend = false;
   final_span.innerHTML = "";
   interim_span.innerHTML = "";
-  // start_img.src = "mic-slash.gif";
-  start_timestamp = event.timeStamp;
 }
 
     </script>

@@ -10,9 +10,12 @@ export class DemoService {
 
   constructor(public platform: Platform,
               public toast: ToastService,
-              public device: Device) { }
+              public device: Device) {
+      this.speech = ('webkitSpeechRecognition' in window);
+  }
 
     public online = false;
+    public speech = false;
     public connectionType: string;
 
     public checkConnection(): boolean {

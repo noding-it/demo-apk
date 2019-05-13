@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { DemoService } from '../_services/demo.service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import {BarcodeReaderPage} from '../_ui/barcode-reader.page';
+import {ModalService} from '../_services/modal.service';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +11,9 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 })
 export class HomePage {
     constructor(public ds: DemoService,
-                private barcodeScanner: BarcodeScanner) { }
+                private barcodeScanner: BarcodeScanner,
+                private modal: ModalService
+    ) { }
 
     public ultimaLettura: string;
     public totaleLetture = 0;
@@ -26,6 +30,16 @@ export class HomePage {
             }
         }).catch(err => {
             console.log('Error', err);
+        });
+    }
+
+    scanSpeech() {
+        const modal = this.modal.present(BarcodeReaderPage, undefined);
+        modal.then((result) => {
+            if (result.data !== undefined && result.data !== null) {
+                this.ultimaLettura = result.data;
+                this.totaleLetture += 1;
+            }
         });
     }
 }

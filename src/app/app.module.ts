@@ -12,6 +12,7 @@ import { Network } from '@ionic-native/network/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { BarcodeReaderPage } from './_ui/barcode-reader.page';
+import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 
 @NgModule({
   declarations: [AppComponent, BarcodeReaderPage],
@@ -25,6 +26,7 @@ import { BarcodeReaderPage } from './_ui/barcode-reader.page';
     StatusBar,
     SplashScreen,
     BarcodeScanner,
+    SpeechRecognition,
     Network,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Device

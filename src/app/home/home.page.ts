@@ -60,18 +60,18 @@ export class HomePage {
     startSpeech() {
         this.speechRecognition.isRecognitionAvailable().then((available: boolean) => {
                 if (available) {
-                    this.speechRecognition.startListening({}).subscribe((matches: string[]) => {
-                            try {
-                                const barcode = matches.toString().match(/\d+/).toString();
-                                console.log('barcode', barcode);
-                                this.ultimaLettura = barcode;
-                                this.totaleLetture += 1;
-                                this.speechRecognition.stopListening();
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        },
-                        (onerror) => console.log('error:', onerror));
+                    this.speechRecognition.startListening({
+                        prompt: 'Pronuncia barcode da leggere',
+                        language: 'it-IT',
+                        showPopup: false
+                    }).subscribe((matches: string[]) => {
+                        this.speechRecognition.stopListening();
+                        const barcode = matches.toString().match(/\d+/).toString();
+                        console.log('barcode', barcode);
+                        this.ultimaLettura = barcode;
+                        this.totaleLetture += 1;
+                    },
+                    (onerror) => console.log('error:', onerror));
                 }
             });
     }

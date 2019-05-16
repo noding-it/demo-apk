@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
-import { ToastService } from './toast.service';
 import { Device } from '@ionic-native/device/ngx';
 
 @Injectable({
@@ -8,9 +6,7 @@ import { Device } from '@ionic-native/device/ngx';
 })
 export class DemoService {
 
-  constructor(public platform: Platform,
-              public toast: ToastService,
-              public device: Device) {
+  constructor(public device: Device) {
       this.speech = ('webkitSpeechRecognition' in window);
   }
 
